@@ -1,6 +1,8 @@
 import math
+import re
 import requests
 from bs4 import BeautifulSoup
+from model.MongoDAO import add_review
 
 def get_movie_title(movie_code):
     url = 'https://movie.naver.com/movie/bi/mi/basic.naver?code={}'.format(movie_code)
@@ -17,7 +19,9 @@ def calc_pages(movie_code):
     result = requests.get(url)
     doc = BeautifulSoup(result.text, 'html.parser')
     all_count = doc.select('strong.total > em')[0].get_text().strip()
-    pages = math.ceil(int(all_count) / 10)
+
+    numbers = re.sub(r'[^0-9]', '', all_count)  # 정규식 활용 => 0~9숫자 외의 값은 ''으로 제거
+    pages = math.ceil(int(numbers) / 10)
     return pages
 
 def get_reviews(movie_code,pages, title):
@@ -57,3 +61,12 @@ def get_reviews(movie_code,pages, title):
             print('WRITER:{}'.format(writer))
             print('SCORE:{}'.format(score))
             print('DATE:{}'.format(date))
+
+            # MongoDB에 Review 저장
+            # MongoDB는 Dict type으로 데이터를 CRUD
+            data = {'title': title,
+                    'score': score,
+                    'review': review,
+                    'writer': writer,
+                    'date': date}
+            add_review(data)
