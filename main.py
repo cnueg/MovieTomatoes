@@ -29,21 +29,7 @@ pages = wcs.calc_pages(movie_code)
 print(pages)
 
 # 3.리뷰 수집
-review = wcs.get_reviews(movie_code, pages, title)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+# wcs.get_reviews(movie_code, pages, title)
 
 
 ################
