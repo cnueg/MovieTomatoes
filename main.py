@@ -77,6 +77,7 @@ print('model(type):', type(model))
 
 
 # 인공지능 모델로 긍부정 예측하는 메서드
+pos_count = 0
 def predict_pos_neg(review):
     token = tokenize(review)
     tf = term_frequency(token)
@@ -84,12 +85,38 @@ def predict_pos_neg(review):
     predict_score = float(model.predict(data))
 
     if(predict_score > 0.5):
+        global pos_count
+        pos_count += 1
         print('[{}] => {:.2f}% 확률로 긍정리뷰 예상'.format(review, predict_score * 100))
     else:
         print('[{}] => {:.2f}% 확률로 부정리뷰 예상'.format(review, predict_score * 100))
 
-predict_pos_neg(review_list[750][1])
+
+
 
 #################
 # 3.분석결과 시각화#
 #################
+def predict_result():
+    for one in review_list:
+        predict_pos_neg(one[1])
+
+    aCount = len(review_list)  # 리뷰 전체 개수
+    pCount = pos_count
+    pos_pct = (pCount * 100) /aCount
+    neg_pct = 100 - pos_pct
+
+    print('====================================================================')
+    print('==({})리뷰 {}개를 감성분석한 결과'.format(review_list[0][0], aCount))
+    print('== 긍정적인 의견{:.2f}% / 부정적인 의견{:.2f}%'.format(pos_pct, neg_pct))
+    print('====================================================================')
+
+predict_result()
+
+
+
+
+
+
+
+
